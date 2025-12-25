@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -168,15 +169,7 @@ func TestWalletService_UpdateBalance(t *testing.T) {
 					t.Errorf("expected error but got none")
 				}
 				if tt.errContains != "" && err != nil {
-					errStr := err.Error()
-					found := false
-					for i := 0; i <= len(errStr)-len(tt.errContains); i++ {
-						if i+len(tt.errContains) <= len(errStr) && errStr[i:i+len(tt.errContains)] == tt.errContains {
-							found = true
-							break
-						}
-					}
-					if !found {
+					if !strings.Contains(err.Error(), tt.errContains) {
 						t.Errorf("error message should contain '%s', got '%s'", tt.errContains, err.Error())
 					}
 				}
