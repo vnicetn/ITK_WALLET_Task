@@ -28,7 +28,7 @@ type WalletInterface interface {
 
 func (r *WalletRepository) GetBalance(ctx context.Context, walletID uuid.UUID) (int, error) {
 	var balance int
-	err := r.db.QueryRow("SELECT balance from wallets WHERE id = $1", walletID).Scan(&balance)
+	err := r.db.QueryRowContext(ctx, "SELECT balance from wallets WHERE id = $1", walletID).Scan(&balance)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, fmt.Errorf("balance not found")
@@ -48,7 +48,7 @@ func (r *WalletRepository) UpdateBalance(ctx context.Context, walletID uuid.UUID
 		return false, err
 	}
 
-	err = tx.QueryRow("SELECT balance from wallets WHERE id = $1 FOR UPDATE", walletID).Scan(&balance)
+	err = tx.QueryRowContext(ctx, "SELECT balance from wallets WHERE id = $1 FOR UPDATE", walletID).Scan(&balance)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return false, fmt.Errorf("wallet not found")

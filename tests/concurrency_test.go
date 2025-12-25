@@ -180,4 +180,3 @@ func TestConcurrency_MultipleOperations(t *testing.T) {
 		t.Errorf("Balance mismatch. Expected %d, got %d", expectedBalance, balance)
 	}
 }
-
