@@ -103,4 +103,3 @@ func TestIntegration_WalletFlow(t *testing.T) {
 		}
 	})
 }
-

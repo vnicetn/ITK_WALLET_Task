@@ -37,7 +37,7 @@ func TestConcurrency_1000RPS(t *testing.T) {
 		t.Fatalf("Failed to create wallet: %v", err)
 	}
 
-	initialDeposit := uint(1000000)
+	initialDeposit := int(1000000)
 	_, err = svc.UpdateBalance(context.Background(), walletID, models.OperationTypeDeposit, initialDeposit)
 	if err != nil {
 		t.Fatalf("Failed initial deposit: %v", err)
@@ -45,7 +45,7 @@ func TestConcurrency_1000RPS(t *testing.T) {
 
 	totalRequests := 1000
 	concurrentRequests := 100
-	amount := uint(1)
+	amount := int(1)
 
 	var successCount int64
 	var errorCount int64
@@ -130,9 +130,9 @@ func TestConcurrency_MultipleOperations(t *testing.T) {
 
 	deposits := 100
 	withdraws := 50
-	amount := uint(10)
+	amount := int(10)
 
-	_, err = svc.UpdateBalance(context.Background(), walletID, models.OperationTypeDeposit, uint(1000))
+	_, err = svc.UpdateBalance(context.Background(), walletID, models.OperationTypeDeposit, int(1000))
 	if err != nil {
 		t.Fatalf("Failed initial deposit: %v", err)
 	}

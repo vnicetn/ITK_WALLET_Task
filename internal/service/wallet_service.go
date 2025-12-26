@@ -28,13 +28,13 @@ func (s *WalletService) GetBalance(ctx context.Context, walletID uuid.UUID) (int
 	return balance, nil
 }
 
-func (s *WalletService) UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error) {
+func (s *WalletService) UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error) {
 	if operationType != models.OperationTypeDeposit && operationType != models.OperationTypeWithdraw {
 		return false, fmt.Errorf("invalid operationType: %s", operationType)
 	}
 
-	if amount == 0 {
-		return false, fmt.Errorf("amount cannot be zero")
+	if amount <= 0 {
+		return false, fmt.Errorf("amount must be greater than zero")
 	}
 
 	ok, err := s.walletRepo.UpdateBalance(ctx, walletID, operationType, amount)

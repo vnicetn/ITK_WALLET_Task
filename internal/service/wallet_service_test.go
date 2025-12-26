@@ -12,7 +12,7 @@ import (
 
 type MockWalletRepository struct {
 	GetBalanceFunc    func(ctx context.Context, walletID uuid.UUID) (int, error)
-	UpdateBalanceFunc func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error)
+	UpdateBalanceFunc func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error)
 	CreateWalletFunc  func(ctx context.Context, walletID uuid.UUID) (bool, error)
 }
 
@@ -23,7 +23,7 @@ func (m *MockWalletRepository) GetBalance(ctx context.Context, walletID uuid.UUI
 	return 0, nil
 }
 
-func (m *MockWalletRepository) UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error) {
+func (m *MockWalletRepository) UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error) {
 	if m.UpdateBalanceFunc != nil {
 		return m.UpdateBalanceFunc(ctx, walletID, operationType, amount)
 	}
@@ -99,7 +99,7 @@ func TestWalletService_UpdateBalance(t *testing.T) {
 	tests := []struct {
 		name          string
 		operationType models.OperationType
-		amount        uint
+		amount        int
 		mockSetup     func(*MockWalletRepository)
 		wantErr       bool
 		errContains   string
@@ -109,7 +109,7 @@ func TestWalletService_UpdateBalance(t *testing.T) {
 			operationType: models.OperationTypeDeposit,
 			amount:        1000,
 			mockSetup: func(m *MockWalletRepository) {
-				m.UpdateBalanceFunc = func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error) {
+				m.UpdateBalanceFunc = func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error) {
 					return true, nil
 				}
 			},
@@ -120,7 +120,7 @@ func TestWalletService_UpdateBalance(t *testing.T) {
 			operationType: models.OperationTypeWithdraw,
 			amount:        500,
 			mockSetup: func(m *MockWalletRepository) {
-				m.UpdateBalanceFunc = func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error) {
+				m.UpdateBalanceFunc = func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error) {
 					return true, nil
 				}
 			},
@@ -131,7 +131,7 @@ func TestWalletService_UpdateBalance(t *testing.T) {
 			operationType: models.OperationTypeWithdraw,
 			amount:        2000,
 			mockSetup: func(m *MockWalletRepository) {
-				m.UpdateBalanceFunc = func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error) {
+				m.UpdateBalanceFunc = func(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error) {
 					return false, errors.New("insufficient funds")
 				}
 			},

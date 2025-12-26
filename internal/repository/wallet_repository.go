@@ -22,7 +22,7 @@ func NewWalletRepository(db *sql.DB) *WalletRepository {
 
 type WalletInterface interface {
 	GetBalance(ctx context.Context, walletID uuid.UUID) (int, error)
-	UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error)
+	UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error)
 	CreateWallet(ctx context.Context, walletID uuid.UUID) (bool, error)
 }
 
@@ -39,9 +39,9 @@ func (r *WalletRepository) GetBalance(ctx context.Context, walletID uuid.UUID) (
 	return balance, nil
 }
 
-func (r *WalletRepository) UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount uint) (bool, error) {
-	var balance uint
-	var newBalance uint
+func (r *WalletRepository) UpdateBalance(ctx context.Context, walletID uuid.UUID, operationType models.OperationType, amount int) (bool, error) {
+	var balance int
+	var newBalance int
 
 	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {

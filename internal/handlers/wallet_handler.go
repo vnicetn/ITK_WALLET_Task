@@ -22,7 +22,7 @@ func NewWalletHandler(service *service.WalletService) *WalletHandler {
 type OperationRequest struct {
 	WalletID      uuid.UUID            `json:"valletId" binding:"required"`
 	OperationType models.OperationType `json:"operationType" binding:"required"`
-	Amount        uint                 `json:"amount" binding:"required"`
+	Amount        int                  `json:"amount" binding:"required"`
 }
 
 func (h *WalletHandler) GetBalance(c *gin.Context) {
@@ -53,7 +53,12 @@ func (h *WalletHandler) ProcessOperation(c *gin.Context) {
 		return
 	}
 
-	_, err := h.service.UpdateBalance(c.Request.Context(), req.WalletID, req.OperationType, uint(req.Amount))
+	if req.Amount <= 0 {
+		c.AbortWithStatusJSON(400, gin.H{"error": "amount must be greater than zero"})
+		return
+	}
+
+	_, err := h.service.UpdateBalance(c.Request.Context(), req.WalletID, req.OperationType, req.Amount)
 	if err != nil {
 		if strings.Contains(err.Error(), "wallet not found") || strings.Contains(err.Error(), "balance not found") {
 			_, err := h.service.CreateWallet(c.Request.Context(), req.WalletID)
@@ -62,7 +67,7 @@ func (h *WalletHandler) ProcessOperation(c *gin.Context) {
 				return
 			}
 
-			_, err = h.service.UpdateBalance(c.Request.Context(), req.WalletID, req.OperationType, uint(req.Amount))
+			_, err = h.service.UpdateBalance(c.Request.Context(), req.WalletID, req.OperationType, req.Amount)
 			if err != nil {
 				if strings.Contains(err.Error(), "insufficient funds") {
 					c.AbortWithStatusJSON(400, gin.H{"error": "insufficient funds"})
